@@ -1,0 +1,19 @@
+# Ignore everything
+*
+
+# Allow this gitignore file
+!.gitignore
+
+# Allow directories so Git can look inside them
+!*/
+
+# Allow Python files anywhere
+!*.py
+!**/*.py
+
+# Allow text files (requirements.txt)
+!*.txt
+!**/*.txt
+
+!*.png
+!**/*.png
