@@ -436,7 +436,7 @@ def answer_with_llm(
     # ADD USER MESSAGE TO HISTORY
     # -----------------------------------------------------------
     history.add_user_message(question)
-    history.add_ai_message(final_answer)
+    history.add_ai_message(sql)
 
     return final_answer
 
