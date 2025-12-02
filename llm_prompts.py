@@ -61,21 +61,67 @@ def get_system_prompt(database: str, dialect: str, database_table_details: str, 
    
 
 
+# def get_answer_prompt() -> PromptTemplate :
+    
+#     template = """
+#     You are a data assistant. Answer the question strictly based on the SQL Result.
+
+#     Rules:
+#     - Only use the SQL Result to answer.
+#     - Do not guess. If data is missing or empty, answer "No results found."
+#     - Keep the answer short and factual.
+
+#     Question: {question}
+#     SQL Query: {query}
+#     SQL Result: {result}
+
+#     Answer:
+#     """
+#     return PromptTemplate.from_template(template)
+
+
 def get_answer_prompt() -> PromptTemplate :
     
     template = """
-    You are a data assistant. Answer the question strictly based on the SQL Result.
+    You are a data transformation assistant.
+
+    Your ONLY job is to convert the SQL Result into a strict JSON object with this structure:
+
+    {{
+    "sql": "<the SQL query used>",
+    "execution_result": {{
+        "columns": [...],
+        "row_count": <number>,
+        "rows": [
+        {{column1: value1, column2: value2, ... }},
+        ...
+        ]
+    }}
+    }}
 
     Rules:
-    - Only use the SQL Result to answer.
-    - Do not guess. If data is missing or empty, answer "No results found."
-    - Keep the answer short and factual.
+    - "sql" value must EXACTLY match the SQL Query provided below.
+    - Use EXACT column names from the SQL Query.
+    - row_count must equal the number of rows in the result.
+    - Do NOT add or remove data.
+    - Do NOT guess or invent values.
+    - If SQL Result is empty or null, return:
+    {{
+        "sql": "<the SQL query used>",
+        "execution_result": {{
+        "columns": [],
+        "row_count": 0,
+        "rows": []
+        }}
+    }}
+    - Output MUST be valid JSON – no comments, no explanations, no markdown.
 
+    SQL Result:
+    {result}
     Question: {question}
     SQL Query: {query}
-    SQL Result: {result}
 
-    Answer:
+    Return ONLY valid JSON:
     """
     return PromptTemplate.from_template(template)
 

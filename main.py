@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 from dotenv import load_dotenv
 from langchain_community.utilities import SQLDatabase
 from database_utils import connect_to_db
-#from langchain_ollama import ChatOllama, OllamaLLM
+from langchain_ollama import ChatOllama, OllamaLLM
 
 from llm import get_final_tables, answer_with_llm
 from services.database import db
