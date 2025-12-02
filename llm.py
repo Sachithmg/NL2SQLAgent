@@ -325,6 +325,77 @@ def run_with_sql_retry(question: str, chain, execute_query, sql_fix_chain, max_r
 
 
 
+def validate_final_json(output: str):
+    """
+    Validate final JSON output against expected structure.
+
+    Expected Structure:
+    {
+        "sql": "...",
+        "execution_result": {
+            "columns": [...],
+            "row_count": int,
+            "rows": [...]
+        }
+    }
+
+    Returns:
+        dict: valid output
+        OR
+        None if structure is invalid
+    """
+    try:
+        data = json.loads(output)
+    except Exception:
+        return None
+
+    # Must be a dict and contain expected keys
+    if not isinstance(data, dict):
+        return None
+
+    if "sql" not in data or "execution_result" not in data:
+        return None
+
+    er = data["execution_result"]
+
+    if not isinstance(er, dict):
+        return None
+
+    # Validate nested fields
+    required_fields = ["columns", "row_count", "rows"]
+    for field in required_fields:
+        if field not in er:
+            return None
+
+    if not isinstance(er["columns"], list):
+        return None
+
+    if not isinstance(er["row_count"], int):
+        return None
+
+    if not isinstance(er["rows"], list):
+        return None
+
+    return data
+
+
+
+def default_output(sql: str):
+    return {
+        "sql": sql,
+        "execution_result": {
+            "columns": [],
+            "row_count": 0,
+            "rows": []
+        }
+    }
+
+
+
+
+
+
+
 # ---------------------------------------------------------------
 # Main Function
 # ---------------------------------------------------------------
@@ -431,6 +502,13 @@ def answer_with_llm(
         "query": sql,
         "result": result
     })
+
+    validated = validate_final_json(final_answer)
+
+    if validated is None:
+        # fallback
+        validated = default_output(sql)
+
 
     # -----------------------------------------------------------
     # ADD USER MESSAGE TO HISTORY
