@@ -8,7 +8,7 @@ from operator import itemgetter
 
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
-from langchain_ollama import ChatOllama, OllamaLLM
+#from langchain_ollama import ChatOllama, OllamaLLM
 from langchain.agents import create_agent
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.tools import QuerySQLDataBaseTool
